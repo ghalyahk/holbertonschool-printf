@@ -1,0 +1,34 @@
+.TH PRINTF 3 "01-10-2025" "1.0" "holbertonschool printf function"
+.SH NAME
+printf \- prints formatted output to stdout
+.SH SYNOPSIS
+#include <stdio.h>
+
+int printf(const char *format, ...);
+.SH DESCRIPTION
+The printf() function produces output according to a format string. The format string
+consists of zero or more directives: ordinary characters (except \%) and conversion
+specifications. Each conversion specification is introduced by the % character
+and specifies how subsequent arguments are converted for output.
+
+The printf() function returns the number of characters printed (excluding the null
+byte used to end output to strings) or a negative value if an output error occurs.
+.SH PARAMETERS
+.TP
+format
+A C string that contains a format string that follows the same specifications as
+the format argument for the printf() function in standard C.
+.TP
+...
+Additional arguments
+The additional arguments, each containing a value to be used to replace a
+format specifier in the format string.
+.SH RETURN VALUE
+Upon successful return, printf() returns the number of characters printed. If an
+output error occurs, a negative value is returned.
+.SH EXAMPLES
+.TP
+Example 1:
+```c
+printf("Hello, %s!\n", "world");
+
