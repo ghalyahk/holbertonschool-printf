@@ -2,9 +2,13 @@
 #define MAIN_H
 
 #include <stdarg.h>
+#include <unistd.h>
 
-/* Function prototypes */
+/* _printf prototype */
 int _printf(const char *format, ...);
-int _putchar(char c);
 
-#endif
+/* Helper function prototypes */
+int _putchar(char c);
+int print_binary(unsigned int n);
+
+#endif /* MAIN_H */
