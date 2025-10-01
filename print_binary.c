@@ -9,8 +9,9 @@
 int print_binary(unsigned int n)
 {
     int count = 0;
-    unsigned int mask = 1 << (sizeof(unsigned int) * 8 - 1);
+    unsigned int mask;
     int started = 0;
+    unsigned int tmp;
 
     if (n == 0)
     {
@@ -18,6 +19,7 @@ int print_binary(unsigned int n)
         return 1;
     }
 
+    mask = 1 << (sizeof(unsigned int) * 8 - 1);
     while (mask)
     {
         if (n & mask)
@@ -26,13 +28,13 @@ int print_binary(unsigned int n)
             started = 1;
         }
         else if (started)
+        {
             _putchar('0');
-
+        }
         mask >>= 1;
     }
 
-    /* Count number of digits printed */
-    unsigned int tmp = n;
+    tmp = n;
     while (tmp)
     {
         count++;
