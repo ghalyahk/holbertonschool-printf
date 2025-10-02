@@ -2,6 +2,7 @@
 
 int main(void)
 {
-    _printf("Hello, %s! Your score is %d%%. Char: %c\n", "Ali", 95, 'A');
+    _printf("Hello, Ali! Your score is %d%%. Char: %c\n", 95, 'A');
     return 0;
 }
+

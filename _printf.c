@@ -1,65 +1,88 @@
 #include "main.h"
 
+/* انسخ هنا دوال buf_putchar و buf_puts و flush_buf */
+static char buffer[1024];
+static int buf_index = 0;
+
+int buf_putchar(char c)
+{
+    if (buf_index >= 1024)
+        flush_buf();
+    buffer[buf_index++] = c;
+    return 1;
+}
+
+int buf_puts(char *str)
+{
+    int i = 0;
+    while (str[i])
+    {
+        buf_putchar(str[i]);
+        i++;
+    }
+    return i;
+}
+
+int flush_buf(void)
+{
+    int wrote = 0;
+
+    if (buf_index > 0)
+    {
+        wrote = write(1, buffer, buf_index);
+        buf_index = 0;
+    }
+    return wrote;
+}
+
+/* دالة _printf */
 int _printf(const char *format, ...)
 {
     va_list args;
-    char buf[BUF_SIZE];
-    int buf_i = 0;
-    int total = 0;
-    const char *p;
+    int printed_chars = 0;
+    char ch;
 
-    if (!format)
+    if (format == NULL)
         return -1;
 
     va_start(args, format);
-    p = format;
 
-    while (*p)
+    while ((ch = *format++) != '\0')
     {
-        if (*p == '%')
+        if (ch == '%')
         {
-            p++;
-            if (*p == 'c')
+            ch = *format++;
+            if (ch == 'c')
             {
                 char c = (char)va_arg(args, int);
-                buf_putchar(c, buf, &buf_i);
-                total++;
+                printed_chars += buf_putchar(c);
             }
-            else if (*p == 's')
+            else if (ch == 's')
             {
-                char *s = va_arg(args, char *);
-                if (!s)
-                    s = "(null)";
-                total += buf_puts(s, buf, &buf_i);
+                char *str = va_arg(args, char *);
+                if (str == NULL)
+                    str = "(null)";
+                printed_chars += buf_puts(str);
             }
-            else if (*p == 'd' || *p == 'i')
+            else if (ch == '%')
             {
-                int num = va_arg(args, int);
-                total += buf_putint(num, buf, &buf_i);
-            }
-            else if (*p == '%')
-            {
-                buf_putchar('%', buf, &buf_i);
-                total++;
+                printed_chars += buf_putchar('%');
             }
             else
             {
-                buf_putchar('%', buf, &buf_i);
-                buf_putchar(*p, buf, &buf_i);
-                total += 2;
+                /* معالجة أخرى ممكن تضيفها */
+                printed_chars += buf_putchar('%');
+                printed_chars += buf_putchar(ch);
             }
         }
         else
         {
-            buf_putchar(*p, buf, &buf_i);
-            total++;
+            printed_chars += buf_putchar(ch);
         }
-        p++;
     }
 
     va_end(args);
-    flush_buf(buf, &buf_i);
-
-    return total;
+    printed_chars += flush_buf();
+    return printed_chars;
 }
 

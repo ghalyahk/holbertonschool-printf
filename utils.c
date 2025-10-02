@@ -1,45 +1,56 @@
 #include "main.h"
 
-/* تحويل int إلى نص */
+/* تحويل عدد صحيح إلى نص */
 int int_to_str(int n, char *str)
 {
-    int i = 0, sign = n, start = 0;
-    char temp[12];
-    int j;
+    int i = 0, j;
+    int is_negative = 0;
+    unsigned int num;
 
     if (n == 0)
     {
         str[i++] = '0';
         str[i] = '\0';
-        return 1;
+        return i;
     }
 
     if (n < 0)
-        n = -n;
-
-    while (n > 0)
     {
-        temp[i++] = (n % 10) + '0';
-        n /= 10;
+        is_negative = 1;
+        num = (unsigned int)(-n);
+    }
+    else
+    {
+        num = (unsigned int)n;
     }
 
-    if (sign < 0)
-        temp[i++] = '-';
-
-    for (j = i - 1; j >= 0; j--)
+    while (num != 0)
     {
-        str[start++] = temp[j];
+        str[i++] = (num % 10) + '0';
+        num /= 10;
     }
 
-    str[start] = '\0';
-    return start;
+    if (is_negative)
+        str[i++] = '-';
+
+    /* عكس السلسلة */
+    for (j = 0; j < i / 2; j++)
+    {
+        char temp = str[j];
+        str[j] = str[i - j - 1];
+        str[i - j - 1] = temp;
+    }
+    str[i] = '\0';
+    return i;
 }
 
-/* طباعة رقم int باستخدام البفر */
-int buf_putint(int n, char *buf, int *buf_i)
+/* طباعة عدد صحيح */
+int buf_putint(int n)
 {
-    char numbuf[12];
-    int_to_str(n, numbuf);
-    return buf_puts(numbuf, buf, buf_i);
+    char numbuf[12]; /* تكفي لأكبر int مع الإشارة */
+    int len;
+
+    len = int_to_str(n, numbuf);
+    return buf_puts(numbuf);
 }
 

@@ -1,41 +1,80 @@
 #include "main.h"
 
-/* تفريغ محتوى البفر وطباعته */
-int flush_buf(char *buf, int *buf_i)
+/* هنا تكتب دوال أخرى مثل طباعة unsigned, hex, pointer لو حبيت */
+
+/* مثال: طباعة unsigned int */
+int buf_putunsigned(unsigned int n)
 {
-    if (*buf_i > 0)
+    char numbuf[11]; /* تكفي لأكبر unsigned int */
+    int i = 0, j;
+    unsigned int num = n;
+
+    if (num == 0)
     {
-        int written = write(1, buf, *buf_i);
-        *buf_i = 0;
-        return written;
+        return buf_putchar('0');
     }
-    return 0;
+
+    while (num != 0)
+    {
+        numbuf[i++] = (num % 10) + '0';
+        num /= 10;
+    }
+
+    /* عكس السلسلة */
+    for (j = 0; j < i / 2; j++)
+    {
+        char temp = numbuf[j];
+        numbuf[j] = numbuf[i - j - 1];
+        numbuf[i - j - 1] = temp;
+    }
+    numbuf[i] = '\0';
+
+    return buf_puts(numbuf);
 }
 
-/* إضافة حرف إلى البفر */
-int buf_putchar(char c, char *buf, int *buf_i)
+/* دالة طباعة hex (lowercase أو uppercase حسب الباراميتر) */
+int buf_puthex(unsigned int n, int uppercase)
 {
-    buf[*buf_i] = c;
-    (*buf_i)++;
+    char hex_chars[] = "0123456789abcdef";
+    char HEX_CHARS[] = "0123456789ABCDEF";
+    char numbuf[9]; /* تكفي لـ 32-bit hex */
+    int i = 0, j;
+    unsigned int num = n;
 
-    if (*buf_i >= BUF_SIZE)
-        return flush_buf(buf, buf_i);
+    if (num == 0)
+    {
+        return buf_putchar('0');
+    }
 
-    return 1;
+    while (num != 0)
+    {
+        if (uppercase)
+            numbuf[i++] = HEX_CHARS[num % 16];
+        else
+            numbuf[i++] = hex_chars[num % 16];
+        num /= 16;
+    }
+
+    /* عكس السلسلة */
+    for (j = 0; j < i / 2; j++)
+    {
+        char temp = numbuf[j];
+        numbuf[j] = numbuf[i - j - 1];
+        numbuf[i - j - 1] = temp;
+    }
+    numbuf[i] = '\0';
+
+    return buf_puts(numbuf);
 }
 
-/* إضافة سلسلة إلى البفر */
-int buf_puts(const char *s, char *buf, int *buf_i)
+/* طباعة pointer */
+int buf_putptr(void *ptr)
 {
-    int count = 0;
+    unsigned long addr = (unsigned long)ptr;
+    int printed_chars = 0;
 
-    while (*s)
-    {
-        if (buf_putchar(*s, buf, buf_i) < 0)
-            return -1;
-        s++;
-        count++;
-    }
-    return count;
+    printed_chars += buf_puts("0x");
+    printed_chars += buf_puthex((unsigned int)addr, 0);
+    return printed_chars;
 }
 
